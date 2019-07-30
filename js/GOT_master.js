@@ -8,7 +8,9 @@
 		  houseVideo = document.querySelector(".house-video"),
 		  bannerImages = document.querySelector('#houseImages'),
 		  houseName = document.querySelector("#house-name"),
-		  houseInfo = document.querySelector(".house-info");
+		  houseInfo = document.querySelector(".house-info"),
+		  pauseButton = document.querySelector(".fa-pause-circle"),
+		  playButton = document.querySelector(".fa-play-circle");
 
 		  // houseData is a multidimensional array (arrays within arrays!) Data containers can hold anything - in this case, each index or entry holds another, smaller container with 2 indexes - 1 with the house name, one with the house data.
 		  // when you click on a shield, the dataset.offset property is a 0 through 4 that's pointing at the main index of the houseData array (stark, baratheon, lannister etc). so the syntax becomes houseData[0][0] for the house name, and house data[0][1] for the house data. Each gets assigned to the h1 and the paragraph tag
@@ -35,10 +37,39 @@
 		["arryn", `House Arryn of the Eyrie is one of the Great Houses of Westeros. It has ruled over the Vale of Arryn for millennia, originally as the Kings of Mountain and Vale and more recently as Lords Paramount of the Vale and Wardens of the East under the Targaryen kings and Baratheon-Lannister kings. The nominal head of House Arryn is Robin Arryn, the Lord of the Eyrie, with his stepfather Petyr Baelish acting as Lord Protector until he reaches the age of majority. `]
 	];
 
+	// pause the video on a click
+	function pauseVideo() {
+		// pause the video when the button is clicked
+		houseVideo.pause();
+	}
+
+	// play the video on a click
+	function playVideo() {
+		// play the video when the button is clicked
+		houseVideo.play();
+	}
+
+	// write the other functions for the custom video controls (play, volume control, time counter, progress bar scrubber etc)
+
 	function popLightBox() {
 		// debug this so far and make sure the event handling works
 		lightBox.classList.add("show-lightbox");
-		
+
+		//grab a reference to the current video via the className object
+		// debugger;
+		// get the className property, split it into its seperate words, and then get the last word -> [1] -> that will always be the house name.
+		let houseName = this.className.split(" ")[1];
+
+		// capitalize the first letter with JavaScript string methods
+		// houseName = houseName.charAt(0).toUpperCase() + houseName.slice(1);
+
+		// use JavaScript string interpolation to build the path to the target video
+		let videoPath = `video/House-${houseName}.mp4`;
+
+		// load this new video videoPath
+		houseVideo.src = videoPath;
+		houseVideo.load();
+
 		houseVideo.play();
 	}
 	
@@ -73,8 +104,10 @@
 		//debugger;
 	}
 	
-	// sigils.forEach (sigil => sigil.addEventListener("click", popLightBox));
-	sigils.forEach (sigil => sigil.addEventListener("click", animateBanners));
+	sigils.forEach (sigil => sigil.addEventListener("click", popLightBox));
+	// sigils.forEach (sigil => sigil.addEventListener("click", animateBanners));
 	closeButton.addEventListener("click", closeLightBox);
 	houseVideo.addEventListener("ended", closeLightBox);
+	pauseButton.addEventListener("click", pauseVideo);
+	playButton.addEventListener("click", playVideo);
 })();
