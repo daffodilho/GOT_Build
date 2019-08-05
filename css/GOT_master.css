@@ -127,6 +127,13 @@ main {
 
 video {
 	width: 85%;
-	margin: 10% auto 10% auto;
+	margin: 5% auto 10% auto;
 	border: thin solid #949393;
+	display: block;
 }
+
+.video-controls i {
+	color: white;
+	font-size: 2em;
+}
+
