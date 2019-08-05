@@ -10,7 +10,8 @@
 		  houseName = document.querySelector("#house-name"),
 		  houseInfo = document.querySelector(".house-info"),
 		  pauseButton = document.querySelector(".fa-pause-circle"),
-		  playButton = document.querySelector(".fa-play-circle");
+		  playButton = document.querySelector(".fa-play-circle"),
+		  progressBar = document.querySelector("#progress-bar");
 
 		  // houseData is a multidimensional array (arrays within arrays!) Data containers can hold anything - in this case, each index or entry holds another, smaller container with 2 indexes - 1 with the house name, one with the house data.
 		  // when you click on a shield, the dataset.offset property is a 0 through 4 that's pointing at the main index of the houseData array (stark, baratheon, lannister etc). so the syntax becomes houseData[0][0] for the house name, and house data[0][1] for the house data. Each gets assigned to the h1 and the paragraph tag
@@ -34,19 +35,41 @@
 		["greyjoy", `House Greyjoy of Pyke is one of the Great Houses of Westeros. It rules over the Iron Islands, a harsh and bleak collection of islands off the west coast of Westeros, from the castle at Pyke. The head of the house is the Lord Reaper of Pyke. House Greyjoy's sigil is traditionally a golden kraken on a black field. Their house words are "We Do Not Sow," although the phrase "What Is Dead May Never Die" is also closely associated with House Greyjoy and their bannermen, as they are associated with the faith of the Drowned God. `], 
 		
 		// houseData [5][0] is "lannister", houseData [5][1] is the house data
-		["arryn", `House Arryn of the Eyrie is one of the Great Houses of Westeros. It has ruled over the Vale of Arryn for millennia, originally as the Kings of Mountain and Vale and more recently as Lords Paramount of the Vale and Wardens of the East under the Targaryen kings and Baratheon-Lannister kings. The nominal head of House Arryn is Robin Arryn, the Lord of the Eyrie, with his stepfather Petyr Baelish acting as Lord Protector until he reaches the age of majority. `]
+		["arryn", `House Arryn of the Eyrie is one of the Great Houses of Westeros. It has ruled over the Vale of Arryn for millennia, originally as the Kings of Mountain and Vale and more recently as Lords Paramount of the Vale and Wardens of the East under the Targaryen kings and Baratheon-Lannister kings. The nominal head of House Arryn is Robin Arryn, the Lord of the Eyrie, with his stepfather Petyr Baelish acting as Lord Protector until he reaches the age of majority. `],
+
+		// houseData [6][0] is "targaryen", houseData [6][1] is the house data
+		["targaryen", `House Targaryen of Dragonstone is a Great House of Westeros and was the ruling royal House of the Seven Kingdoms for three centuries since it conquered and unified the realm, before it was deposed during Robert's Rebellion and House Baratheon replaced it as the new royal House. The few surviving Targaryens fled into exile to the Free Cities of Essos across the Narrow Sea. Currently based on Dragonstone off of the eastern coast of Westeros, House Targaryen seeks to retake the Seven Kingdoms from House Lannister, who formally replaced House Baratheon as the royal House following the destruction of the Great Sept of Baelor.`],
+
+		// houseData [7][0] is "frey", houseData [7][1] is the house data
+		["frey", `House Frey of the Twins was the Great House of the Riverlands, having gained their position for their treachery against their former liege lords, House Tully, who were stripped of all their lands and titles for their rebellion against the Iron Throne; House Tully had supported the independence movement for the Kingdom of the North. The current head of the house is unknown following the assassinations of Lord Walder Frey and two of his sons, Lothar Frey and Walder Rivers, by the vengeful Arya Stark. This is made more complex by the subsequent assassination of all the male Freys soon after.`],
+
+		// houseData [8][0] is "tyrell", houseData [8][1] is the house data
+		["tyrell", `House Tyrell of Highgarden is an extinct Great House of Westeros. It ruled over the Reach, a vast, fertile, and heavily-populated region of southwestern Westeros, from their castle-seat of Highgarden as Lords Paramount of the Reach and Wardens of the South after taking control of the region from House Gardener during the Targaryen conquest.`]
 	];
 
-	// pause the video on a click
-	function pauseVideo() {
-		// pause the video when the button is clicked
-		houseVideo.pause();
+	// play or pause the video on a click
+	function playPauseVideo() {
+		// if the video is paused, play the video when the button is clicked
+		if (houseVideo.paused) {
+			houseVideo.play();
+			playButton.parentNode.replaceChild(pauseButton,playButton);
+		} else { // pause the video when the button is clicked
+			houseVideo.pause();
+			pauseButton.parentNode.replaceChild(playButton,pauseButton);
+			// change the button to play when video is paused
+		}
 	}
 
-	// play the video on a click
-	function playVideo() {
-		// play the video when the button is clicked
-		houseVideo.play();
+	// progress bar scrubber
+	function videoScrubber() {
+		let scrubTo = houseVideo.duration * (progressBar.value / 100);
+		houseVideo.currentTime = scrubTo;
+	}
+
+	// progress bar current time update
+	function progressUpdate() {
+		let videoProgress = houseVideo.currentTime * (100 / houseVideo.duration);
+		progressBar.value = videoProgress;
 	}
 
 	// write the other functions for the custom video controls (play, volume control, time counter, progress bar scrubber etc)
@@ -77,6 +100,10 @@
 		event.preventDefault();
 		// make the lightbox close
 		lightBox.classList.remove("show-lightbox");
+		
+		// change the button to pause button when closing lightbox
+		// playButton.parentNode.replaceChild(pauseButton,playButton);
+
 		houseVideo.currentTime = 0; // rewind the video
 		houseVideo.pause();
 	}
@@ -104,10 +131,12 @@
 		//debugger;
 	}
 	
-	sigils.forEach (sigil => sigil.addEventListener("click", popLightBox));
-	// sigils.forEach (sigil => sigil.addEventListener("click", animateBanners));
+	sigils.forEach (sigil => sigil.addEventListener("click", animateBanners));
+	// sigils.forEach (sigil => sigil.addEventListener("click", popLightBox));
 	closeButton.addEventListener("click", closeLightBox);
 	houseVideo.addEventListener("ended", closeLightBox);
-	pauseButton.addEventListener("click", pauseVideo);
-	playButton.addEventListener("click", playVideo);
+	pauseButton.addEventListener("click", playPauseVideo);
+	playButton.addEventListener("click", playPauseVideo);
+	progressBar.addEventListener("change", videoScrubber);
+	houseVideo.addEventListener("timeupdate", progressUpdate);
 })();

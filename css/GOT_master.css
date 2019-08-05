@@ -9,6 +9,10 @@
 }
 /* ----- end custom font ----- */
 
+.hidden {
+	display: none;
+}
+
 /* ----- default styles ----- */
 body { background-image:url(../images/grungeBG.jpg);
 	background-repeat:no-repeat; background-position:center center;
@@ -37,7 +41,7 @@ main {
 	overflow:hidden;
 }
 
-#houseImages { position:relative; width:4000px; transition: all .5s; }
+#houseImages { position:relative; width:5400px; transition: all .5s; }
 #houseImages img { float:left; }
 
 .house-info {
@@ -64,7 +68,7 @@ main {
 	height:54px;
 	display:inline-block;
 	overflow:hidden;
-	background-image:url(../images/GOT_sprites.png);
+	background-image:url(../images/GOT_sigils.png);
 	background-repeat:no-repeat;
 	transition:transform .3s;
 	-webkit-transition:-webkit-transform .3s;
@@ -88,6 +92,15 @@ main {
 
 .arryn { background-position:-253px -54px; }
 .arryn:hover { background-position:-253px 0px; }
+
+.targaryen { background-position:-304px -54px; }
+.targaryen:hover { background-position:-304px 0px; }
+
+.frey { background-position:-355px -54px; }
+.frey:hover { background-position:-355px 0px; }
+
+.tyrell { background-position:-406px -54px; }
+.tyrell:hover { background-position:-406px 0px; }
 /* ----- end image sprite ----- */
 
 /* ----- classes for transitions ----- */
@@ -124,16 +137,31 @@ main {
 	text-decoration: none;
 }
 
-
 video {
 	width: 85%;
-	margin: 5% auto 10% auto;
-	border: thin solid #949393;
+	margin: 5% auto 1% auto;
+	border: 5px solid #949393;
 	display: block;
 }
 
+.video-controls {
+	width: 85%;
+	margin: 0 auto;
+	text-align: left;
+}
+
+.video-controls button {
+	background-color: rgba(255, 255, 255, 0);
+	border: 0px;
+}
+
 .video-controls i {
-	color: white;
-	font-size: 2em;
+	color: #B7A57A;
+	font-size: 3em;
+}
+
+#progress-bar {
+	width: 300px;
+	height: 2em;
 }
 
