@@ -15,9 +15,10 @@
 		  currentTime = document.querySelector("#current-time"),
 		  durationTime = document.querySelector("#duration-time"),
 		  volButton = document.querySelector(".fa-volume-up"),
-		  muteButton = document.querySelector(".fa-volume-off"),
 		  volumeSlider = document.querySelector("#volume-slider"),
 		  fullScreenButton = document.querySelector(".fa-expand");
+		  
+	let chosenHouse = "";
 		  
 		  // houseData is a multidimensional array (arrays within arrays!) Data containers can hold anything - in this case, each index or entry holds another, smaller container with 2 indexes - 1 with the house name, one with the house data.
 		  // when you click on a shield, the dataset.offset property is a 0 through 4 that's pointing at the main index of the houseData array (stark, baratheon, lannister etc). so the syntax becomes houseData[0][0] for the house name, and house data[0][1] for the house data. Each gets assigned to the h1 and the paragraph tag
@@ -66,11 +67,12 @@
 			// replace play button with pause button
 			pauseButton.parentNode.replaceChild(playButton,pauseButton);
 		}
+		return;
 	}
 
 	// progress bar scrubber
 	function videoScrubber() {
-		// I don't really get this but it sets the current video time to wherever the progress bar knob is
+		// Set the current video time to wherever the progress bar knob is
 		// so now when you scrub the progress bar, you change the current video time
 		let scrubTo = houseVideo.duration * (progressBar.value / 100);
 		houseVideo.currentTime = scrubTo;
@@ -88,7 +90,7 @@
 		let	durMin = Math.floor(houseVideo.duration / 60);
 		let	durSec = Math.floor(houseVideo.duration - durMin * 60);
 
-		// basically adding zeroes to when there is single digits
+		// basically adding zeroes to where there is single digits
 		if (curMin < 10) {curMin = "0" + curMin};
 		if (curSec < 10) {curSec = "0" + curSec};
 		if (durMin < 10) {durMin = "0" + durMin};
@@ -97,31 +99,6 @@
 		// display the current time and duration
 		currentTime.textContent = curMin + ":" + curSec;
 		durationTime.textContent = durMin + ":" + durSec;
-	}
-
-	// mute the video
-	function muteVideo() {
-		// if video is muted
-		if (houseVideo.muted) {
-			// unmute the video
-			houseVideo.muted = false;
-			// set volume slider knob to max
-			volumeSlider.value = 100;
-			// replace mute volume icon with volume icon
-			muteButton.parentNode.replaceChild(volButton, muteButton);
-		} else { 
-			// else mute the video
-			houseVideo.muted = true;
-			// set volume slider knob to 0
-			volumeSlider.value = 0;
-			// replace volume icon with mute volume icon
-			volButton.parentNode.replaceChild(muteButton,volButton);
-
-			// trying to let there be sound even after video is muted, NOT SUCCESSFUL
-			if(volumeSlider.value > 0) {
-				houseVideo.muted = false;
-			}
-		}
 	}
 
 	function setVolume() {
@@ -160,20 +137,23 @@
 		// the [] is the INNER array reference (see waaay up at the top) -> 0 is the house name, 1 is the house data
 		houseName.textContent = `House ${houseData[multiplier][0]}`;
 		houseInfo.textContent = houseData[multiplier][1];
+
+		chosenHouse = this;
 		//debugger;
 	}
 
-	function popLightBox() {
+	function popLightBox(chosen) {
 		// debug this so far and make sure the event handling works
 		lightBox.classList.add("show-lightbox");
 
 		//grab a reference to the current video via the className object
 		// debugger;
 		// get the className property, split it into its seperate words, and then get the last word -> [1] -> that will always be the house name.
-		let houseName = this.className.split(" ")[1];
+		// let houseName = this.className.split(" ")[1];
+		let houseName = chosenHouse.className.split(" ")[1];
 
 		// capitalize the first letter with JavaScript string methods
-		// houseName = houseName.charAt(0).toUpperCase() + houseName.slice(1);
+		houseName = houseName.charAt(0).toUpperCase() + houseName.slice(1);
 
 		// use JavaScript string interpolation to build the path to the target video
 		let videoPath = `video/House-${houseName}.mp4`;
@@ -181,7 +161,6 @@
 		// load this new video videoPath
 		houseVideo.src = videoPath;
 		houseVideo.load();
-
 		houseVideo.play();
 	}
 	
@@ -189,24 +168,20 @@
 		event.preventDefault();
 		// make the lightbox close
 		lightBox.classList.remove("show-lightbox");
-		
-		// change the button to pause button when closing lightbox
-		// playButton.parentNode.replaceChild(pauseButton,playButton);
 
 		houseVideo.currentTime = 0; // rewind the video
 		houseVideo.pause();
 	}
 	
 	sigils.forEach (sigil => sigil.addEventListener("click", animateBanners));
-	sigils.forEach (sigil => sigil.addEventListener("click", popLightBox));
+	// sigils.forEach (sigil => sigil.addEventListener("click", popLightBox));
+	bannerImages.addEventListener ("transitionend", popLightBox);
 	closeButton.addEventListener("click", closeLightBox);
 	houseVideo.addEventListener("ended", closeLightBox);
 	pauseButton.addEventListener("click", playPauseVideo);
 	playButton.addEventListener("click", playPauseVideo);
 	progressBar.addEventListener("change", videoScrubber);
 	houseVideo.addEventListener("timeupdate", progressUpdate);
-	volButton.addEventListener("click", muteVideo);
-	muteButton.addEventListener("click", muteVideo);
 	volumeSlider.addEventListener("change", setVolume);
 	fullScreenButton.addEventListener("click", toggleFullScreen);
 })();
