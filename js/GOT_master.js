@@ -9,10 +9,16 @@
 		  bannerImages = document.querySelector('#houseImages'),
 		  houseName = document.querySelector("#house-name"),
 		  houseInfo = document.querySelector(".house-info"),
-		  pauseButton = document.querySelector(".fa-pause-circle"),
-		  playButton = document.querySelector(".fa-play-circle"),
-		  progressBar = document.querySelector("#progress-bar");
-
+		  pauseButton = document.querySelector(".fa-pause"),
+		  playButton = document.querySelector(".fa-play"),
+		  progressBar = document.querySelector("#progress-bar"),
+		  currentTime = document.querySelector("#current-time"),
+		  durationTime = document.querySelector("#duration-time"),
+		  volButton = document.querySelector(".fa-volume-up"),
+		  muteButton = document.querySelector(".fa-volume-off"),
+		  volumeSlider = document.querySelector("#volume-slider"),
+		  fullScreenButton = document.querySelector(".fa-expand");
+		  
 		  // houseData is a multidimensional array (arrays within arrays!) Data containers can hold anything - in this case, each index or entry holds another, smaller container with 2 indexes - 1 with the house name, one with the house data.
 		  // when you click on a shield, the dataset.offset property is a 0 through 4 that's pointing at the main index of the houseData array (stark, baratheon, lannister etc). so the syntax becomes houseData[0][0] for the house name, and house data[0][1] for the house data. Each gets assigned to the h1 and the paragraph tag
 
@@ -49,30 +55,113 @@
 
 	// play or pause the video on a click
 	function playPauseVideo() {
-		// if the video is paused, play the video when the button is clicked
-		if (houseVideo.paused) {
+		// if the video is paused,
+		if (houseVideo.paused) { 
+			// play the video when the button is clicked
 			houseVideo.play();
+			// replace pause button with play button
 			playButton.parentNode.replaceChild(pauseButton,playButton);
-		} else { // pause the video when the button is clicked
+		} else { // else pause the video
 			houseVideo.pause();
+			// replace play button with pause button
 			pauseButton.parentNode.replaceChild(playButton,pauseButton);
-			// change the button to play when video is paused
 		}
 	}
 
 	// progress bar scrubber
 	function videoScrubber() {
+		// I don't really get this but it sets the current video time to wherever the progress bar knob is
+		// so now when you scrub the progress bar, you change the current video time
 		let scrubTo = houseVideo.duration * (progressBar.value / 100);
 		houseVideo.currentTime = scrubTo;
 	}
 
 	// progress bar current time update
 	function progressUpdate() {
+		// this triggers the progress bar knob to move according to the video progress
 		let videoProgress = houseVideo.currentTime * (100 / houseVideo.duration);
 		progressBar.value = videoProgress;
+
+		// 
+		let curMin = Math.floor(houseVideo.currentTime / 60);
+		let	curSec = Math.floor(houseVideo.currentTime - curMin * 60);
+		let	durMin = Math.floor(houseVideo.duration / 60);
+		let	durSec = Math.floor(houseVideo.duration - durMin * 60);
+
+		// basically adding zeroes to when there is single digits
+		if (curMin < 10) {curMin = "0" + curMin};
+		if (curSec < 10) {curSec = "0" + curSec};
+		if (durMin < 10) {durMin = "0" + durMin};
+		if (durSec < 10) {durSec = "0" + durSec};
+
+		// display the current time and duration
+		currentTime.textContent = curMin + ":" + curSec;
+		durationTime.textContent = durMin + ":" + durSec;
+	}
+
+	// mute the video
+	function muteVideo() {
+		// if video is muted
+		if (houseVideo.muted) {
+			// unmute the video
+			houseVideo.muted = false;
+			// set volume slider knob to max
+			volumeSlider.value = 100;
+			// replace mute volume icon with volume icon
+			muteButton.parentNode.replaceChild(volButton, muteButton);
+		} else { 
+			// else mute the video
+			houseVideo.muted = true;
+			// set volume slider knob to 0
+			volumeSlider.value = 0;
+			// replace volume icon with mute volume icon
+			volButton.parentNode.replaceChild(muteButton,volButton);
+
+			// trying to let there be sound even after video is muted, NOT SUCCESSFUL
+			if(volumeSlider.value > 0) {
+				houseVideo.muted = false;
+			}
+		}
+	}
+
+	function setVolume() {
+		houseVideo.volume = volumeSlider.value / 100;
+	}
+
+	function toggleFullScreen() {
+		if (houseVideo.requestFullScreen) {
+			houseVideo.requestFullScreen();
+		}	else if (houseVideo.webkitRequestFullScreen) {
+			houseVideo.webkitRequestFullScreen();
+		}	else if (houseVideo.mozRequestFullScreen) {
+			houseVideo.mozRequestFullScreen;
+		}
 	}
 
 	// write the other functions for the custom video controls (play, volume control, time counter, progress bar scrubber etc)
+
+	function animateBanners(){
+		// we need an offset that we can multiply by to animate our banners to the left
+		// and make the active one show up
+
+		let offset = 600,
+			multiplier = this.dataset.offset; 
+			// this is the data-offset custom data attribute 
+			//on each of the sigils
+		console.log(offset * multiplier + "px");
+
+		// move the banners to the left using the product of our math
+		bannerImages.style.right = `${offset * multiplier + "px"}`;
+
+		//change the house name on the page at the same time
+		//houseName.textContent = "House " + houseData[multiplier];
+
+		//the multiplier is the outer array index (and also the data-offset custom attribute on the html element -> the shield you're clicking on);
+		// the [] is the INNER array reference (see waaay up at the top) -> 0 is the house name, 1 is the house data
+		houseName.textContent = `House ${houseData[multiplier][0]}`;
+		houseInfo.textContent = houseData[multiplier][1];
+		//debugger;
+	}
 
 	function popLightBox() {
 		// debug this so far and make sure the event handling works
@@ -107,36 +196,17 @@
 		houseVideo.currentTime = 0; // rewind the video
 		houseVideo.pause();
 	}
-
-	function animateBanners(){
-		// we need an offset that we can multiply by to animate our banners to the left
-		// and make the active one show up
-
-		let offset = 600,
-			multiplier = this.dataset.offset; 
-			// this is the data-offset custom data attribute 
-			//on each of the sigils
-		console.log(offset * multiplier + "px");
-
-		// move the banners to the left using the product of our math
-		bannerImages.style.right = `${offset * multiplier + "px"}`;
-
-		//change the house name on the page at the same time
-		//houseName.textContent = "House " + houseData[multiplier];
-
-		//the multiplier is the outer array index (and also the data-offset custom attribute on the html element -> the shield you're clicking on);
-		// the [] is the INNER array reference (see waaay up at the top) -> 0 is the house name, 1 is the house data
-		houseName.textContent = `House ${houseData[multiplier][0]}`;
-		houseInfo.textContent = houseData[multiplier][1];
-		//debugger;
-	}
 	
 	sigils.forEach (sigil => sigil.addEventListener("click", animateBanners));
-	// sigils.forEach (sigil => sigil.addEventListener("click", popLightBox));
+	sigils.forEach (sigil => sigil.addEventListener("click", popLightBox));
 	closeButton.addEventListener("click", closeLightBox);
 	houseVideo.addEventListener("ended", closeLightBox);
 	pauseButton.addEventListener("click", playPauseVideo);
 	playButton.addEventListener("click", playPauseVideo);
 	progressBar.addEventListener("change", videoScrubber);
 	houseVideo.addEventListener("timeupdate", progressUpdate);
+	volButton.addEventListener("click", muteVideo);
+	muteButton.addEventListener("click", muteVideo);
+	volumeSlider.addEventListener("change", setVolume);
+	fullScreenButton.addEventListener("click", toggleFullScreen);
 })();

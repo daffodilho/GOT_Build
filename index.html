@@ -40,7 +40,7 @@
         </ul>
     </nav>
 
-    <h1 id="house-name">clever tagline goes here</h1><!-- replace this with the house name -->
+    <h1 id="house-name">GAME OF THRONES - THE GREAT HOUSES</h1><!-- replace this with the house name -->
 
     <p class="house-info"></p><!-- replace this with house details (github gist) -->
     
@@ -50,9 +50,19 @@
     	<video class="house-video" src="video/House-Stark.mp4" type="video/mp4"></video>
         <div class="video-controls">
             <h5 class="hidden">custom vid controls</h5>
-            <button id="play-pause"><i class="fas fa-pause-circle"></i></button>
-            <button id="play-button" class="hidden"><i class="fas fa-play-circle"></i></button>
+
+            <button id="play-pause"><i class="fas fa-pause"></i></button>
+            <button id="play-button" class="hidden"><i class="fas fa-play"></i></button>
+
             <input id="progress-bar" type="range" min="0" max="100" value="0" step="1">
+
+            <div id="time-counter"><span id="current-time"></span> / <span id="duration-time"></span></div>
+            
+            <button id="volume-button"><i class="fas fa-volume-up"></i></button>
+            <button id="mute-button" class="hidden"><i class="fas fa-volume-off"></i></button>
+            <input id="volume-slider" type="range" min="0" max="100" value="100" step="1">
+
+            <button id="full-screen"><i class="fas fa-expand"></i></button>
         </div>
 
     </section>
