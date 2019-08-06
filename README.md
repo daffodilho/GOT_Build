@@ -16,5 +16,5 @@ Cd to the directory of your choice. Video files not included.
 * Daffodil Ho 
 
 ## Acknowledgments
-* [original build]https://github.com/Trevor-FanshaweC/GOT_Build_Summer2019.git
-* [custom video controls reference]http://www.developphp.com/video/JavaScript/Video-Player-Controls-CSS-Design-Tutorial
+* [original build](https://github.com/Trevor-FanshaweC/GOT_Build_Summer2019.git)
+* [custom video controls reference](http://www.developphp.com/video/JavaScript/Video-Player-Controls-CSS-Design-Tutorial)
